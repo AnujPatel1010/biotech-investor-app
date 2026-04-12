@@ -1,4 +1,4 @@
-# biotech-investor-app
+# Biotech Investor App Project
 
 AI-powered biotech and pharma investor literacy tool. Enter any ticker 
 to get a plain-English breakdown of a company's pipeline, clinical data, 
@@ -12,7 +12,7 @@ to understand what they own before they buy.
 
 ## Tech Stack
 - Next.js
-- Anthropic Claude API
+- AI API still undecided
 - Deployed on Vercel
 
 ## Disclaimer
