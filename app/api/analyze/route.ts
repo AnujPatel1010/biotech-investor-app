@@ -1,0 +1,46 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  const { ticker } = await req.json();
+
+  const prompt = `You are a biotech and pharma investment educator. Your audience is a complete beginner — someone who has never read a biotech report, doesn't know what a clinical trial is, and has no idea what any medical or financial jargon means. Use plain, simple English throughout. No jargon without explanation.
+
+Analyze the biotech or pharma company: ${ticker}
+
+Structure your response in exactly these 5 sections in this order:
+
+**1. What This Company Does**
+Explain what disease or condition they are trying to treat, and how their drug or therapy works. Pretend you are explaining to a smart friend who has never heard of this company. No jargon.
+
+**2. Where They Are in the Pipeline**
+Explain what stage of development their main drug or therapy is in. What does that stage mean in plain English? How far are they from potentially reaching patients?
+
+**3. What the Clinical Data Has Shown**
+What have the trials actually shown so far? What worked, what didn't, and what does that mean for the drug's chances? Keep it simple and concrete.
+
+**4. The Case for Approval**
+Based on everything above, what would have to be true for this company to succeed? What is the realistic path forward?
+
+**5. The Downside**
+Now that you understand the company — what could go wrong? Be honest and specific. What are the real risks an investor should understand before putting money in?`;
+
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    }
+  );
+
+  const data = await response.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+  if (!text) {
+    return NextResponse.json({ error: 'No response from Gemini' }, { status: 500 });
+  }
+
+  return NextResponse.json({ result: text });
+}
