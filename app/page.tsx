@@ -72,7 +72,7 @@ export default function Home() {
       <section className="flex flex-col items-center justify-center text-center px-6 py-20">
         <div className="inline-flex items-center gap-2 bg-emerald-400/10 border border-emerald-400/20 rounded-full px-4 py-1.5 text-emerald-400 text-sm mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Plain-English Biotech Research
+          Simple BioTech Research
         </div>
 
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tight max-w-3xl leading-tight mb-6">
@@ -81,7 +81,7 @@ export default function Home() {
         </h1>
 
         <p className="text-lg text-white/50 max-w-xl mb-12 leading-relaxed">
-          Enter any biotech or pharma company. Get a plain-English breakdown of their
+          Enter any biotech or pharma company. Get a simple-English breakdown of their
           pipeline, clinical data, and real downside risk — no jargon, no fluff.
         </p>
 
@@ -127,7 +127,7 @@ export default function Home() {
             <div className="text-2xl mb-4">🔬</div>
             <h3 className="font-semibold text-lg mb-2">Company Breakdown</h3>
             <p className="text-white/45 text-sm leading-relaxed">
-              Pipeline stage, clinical data, approval odds, and honest downside risk — in plain English.
+              Pipeline stage, clinical data, approval odds, and honest downside risk — in simple English.
             </p>
           </div>
           <div className="bg-white/4 border border-white/8 rounded-2xl p-7 hover:border-emerald-400/30 transition-colors">
