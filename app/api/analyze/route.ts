@@ -4,12 +4,51 @@ export async function POST(req: NextRequest) {
   try {
     const { ticker } = await req.json();
 
-    const prompt = `You are a biotech and pharma investment educator. Your audience is a complete beginner with no jargon knowledge.
+    const apiKey = process.env.GROQ_API_KEY;
 
-First, determine if "${ticker}" is a real, publicly traded biotech or pharma company. If it is not a real company, respond with exactly this and nothing else:
-NOT_FOUND
+    if (!apiKey) {
+      return NextResponse.json({ error: 'Missing API key' }, { status: 500 });
+    }
 
-If it is a real biotech or pharma company, analyze it using exactly these 5 sections:
+    // Step 1: Validate the company
+    const validationResponse = await fetch(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a strict validator. You only respond with YES or NO. Nothing else. No explanation. No punctuation. Just YES or NO.',
+            },
+            {
+              role: 'user',
+              content: `Is "${ticker}" the exact ticker symbol or official company name of a real, publicly traded biotech or pharma company? Answer YES or NO only.`,
+            },
+          ],
+          max_tokens: 5,
+        }),
+      }
+    );
+
+    const validationData = await validationResponse.json();
+    const validationAnswer = validationData.choices?.[0]?.message?.content?.trim().toUpperCase();
+
+    if (!validationAnswer || !validationAnswer.includes('YES')) {
+      return NextResponse.json({ error: 'NOT_FOUND' });
+    }
+
+    // Step 2: Full analysis
+    const prompt = `You are a biotech and pharma investment educator. Your audience is a complete beginner — someone who has never read a biotech report, doesn't know what a clinical trial is, and has no idea what any medical or financial jargon means. Use plain, simple English throughout. No jargon without explanation.
+
+Analyze the biotech or pharma company: ${ticker}
+
+Structure your response in exactly these 5 sections in this order:
 
 **1. What This Company Does**
 Explain what disease or condition they are trying to treat, and how their drug or therapy works. Pretend you are explaining to a smart friend who has never heard of this company. No jargon.
@@ -25,12 +64,6 @@ Based on everything above, what would have to be true for this company to succee
 
 **5. The Downside**
 Now that you understand the company — what could go wrong? Be honest and specific. What are the real risks an investor should understand before putting money in?`;
-
-    const apiKey = process.env.GROQ_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json({ error: 'Missing API key' }, { status: 500 });
-    }
 
     const response = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
@@ -58,10 +91,6 @@ Now that you understand the company — what could go wrong? Be honest and speci
 
     if (!text) {
       return NextResponse.json({ error: 'No text in response: ' + JSON.stringify(data) }, { status: 500 });
-    }
-
-    if (text.trim() === 'NOT_FOUND') {
-      return NextResponse.json({ error: 'NOT_FOUND' });
     }
 
     return NextResponse.json({ result: text });
