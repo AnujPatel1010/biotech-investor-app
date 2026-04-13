@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
-  const { ticker } = await req.json();
+  try {
+    const { ticker } = await req.json();
 
-  const prompt = `You are a biotech and pharma investment educator. Your audience is a complete beginner — someone who has never read a biotech report, doesn't know what a clinical trial is, and has no idea what any medical or financial jargon means. Use plain, simple English throughout. No jargon without explanation.
+    const prompt = `You are a biotech and pharma investment educator. Your audience is a complete beginner — someone who has never read a biotech report, doesn't know what a clinical trial is, and has no idea what any medical or financial jargon means. Use plain, simple English throughout. No jargon without explanation.
 
 Analyze the biotech or pharma company: ${ticker}
 
@@ -24,23 +25,38 @@ Based on everything above, what would have to be true for this company to succee
 **5. The Downside**
 Now that you understand the company — what could go wrong? Be honest and specific. What are the real risks an investor should understand before putting money in?`;
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      return NextResponse.json({ error: 'Missing API key' }, { status: 500 });
     }
-  );
 
-  const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      }
+    );
 
-  if (!text) {
-    return NextResponse.json({ error: 'No response from Gemini' }, { status: 500 });
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json({ error: JSON.stringify(data) }, { status: 500 });
+    }
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) {
+      return NextResponse.json({ error: 'No text in response: ' + JSON.stringify(data) }, { status: 500 });
+    }
+
+    return NextResponse.json({ result: text });
+
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-
-  return NextResponse.json({ result: text });
 }
