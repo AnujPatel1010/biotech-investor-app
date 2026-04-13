@@ -23,7 +23,11 @@ export default function Home() {
 
       const data = await res.json();
       if (data.error === 'NOT_FOUND') {
-        setError(`"${ticker}" doesn't appear to be a real biotech or pharma company. Please check the ticker or company name and try again.`);
+        setError(`"${ticker}" doesn't appear to be a valid biotech or pharma ticker. Please double-check the ticker symbol and try again.`);
+        return;
+      }
+      if (data.error === 'FULL_NAME') {
+        setError(`Please enter a ticker symbol only (e.g. MRNA, PFE, NVS) — not the full company name.`);
         return;
       }
       if (data.error) {
@@ -72,7 +76,7 @@ export default function Home() {
         </div>
 
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tight max-w-3xl leading-tight mb-6">
-          Understand what you own{' '}
+          Understand your investment{' '}
           <span className="text-emerald-400">before you buy.</span>
         </h1>
 
@@ -88,9 +92,10 @@ export default function Home() {
             value={ticker}
             onChange={(e) => setTicker(e.target.value.toUpperCase())}
             onKeyDown={(e) => e.key === 'Enter' && analyze()}
-            placeholder="Enter ticker or company name..."
+            placeholder="Enter ticker symbol (e.g. MRNA, PFE)..."
+            maxLength={6}
             className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-all"
-          />
+/>
           <button
             onClick={analyze}
             disabled={loading}
