@@ -22,11 +22,16 @@ export default function Home() {
       });
 
       const data = await res.json();
+      if (data.error === 'NOT_FOUND') {
+        setError(`"${ticker}" doesn't appear to be a real biotech or pharma company. Please check the ticker or company name and try again.`);
+        return;
+      }
       if (data.error) {
         setError(data.error);
         return;
       }
       setResult(data.result);
+      
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {

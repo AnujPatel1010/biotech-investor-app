@@ -4,11 +4,12 @@ export async function POST(req: NextRequest) {
   try {
     const { ticker } = await req.json();
 
-    const prompt = `You are a biotech and pharma investment educator. Your audience is a complete beginner — someone who has never read a biotech report, doesn't know what a clinical trial is, and has no idea what any medical or financial jargon means. Use plain, simple English throughout. No jargon without explanation.
+    const prompt = `You are a biotech and pharma investment educator. Your audience is a complete beginner with no jargon knowledge.
 
-Analyze the biotech or pharma company: ${ticker}
+First, determine if "${ticker}" is a real, publicly traded biotech or pharma company. If it is not a real company, respond with exactly this and nothing else:
+NOT_FOUND
 
-Structure your response in exactly these 5 sections in this order:
+If it is a real biotech or pharma company, analyze it using exactly these 5 sections:
 
 **1. What This Company Does**
 Explain what disease or condition they are trying to treat, and how their drug or therapy works. Pretend you are explaining to a smart friend who has never heard of this company. No jargon.
@@ -57,6 +58,10 @@ Now that you understand the company — what could go wrong? Be honest and speci
 
     if (!text) {
       return NextResponse.json({ error: 'No text in response: ' + JSON.stringify(data) }, { status: 500 });
+    }
+
+    if (text.trim() === 'NOT_FOUND') {
+      return NextResponse.json({ error: 'NOT_FOUND' });
     }
 
     return NextResponse.json({ result: text });
