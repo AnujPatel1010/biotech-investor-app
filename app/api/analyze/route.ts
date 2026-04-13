@@ -25,19 +25,24 @@ Based on everything above, what would have to be true for this company to succee
 **5. The Downside**
 Now that you understand the company — what could go wrong? Be honest and specific. What are the real risks an investor should understand before putting money in?`;
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
 
     if (!apiKey) {
       return NextResponse.json({ error: 'Missing API key' }, { status: 500 });
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
+      'https://api.groq.com/openai/v1/chat/completions',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 2000,
         }),
       }
     );
@@ -48,7 +53,7 @@ Now that you understand the company — what could go wrong? Be honest and speci
       return NextResponse.json({ error: JSON.stringify(data) }, { status: 500 });
     }
 
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = data.choices?.[0]?.message?.content;
 
     if (!text) {
       return NextResponse.json({ error: 'No text in response: ' + JSON.stringify(data) }, { status: 500 });
