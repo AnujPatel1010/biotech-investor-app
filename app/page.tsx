@@ -22,10 +22,13 @@ export default function Home() {
       });
 
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
       setResult(data.result);
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
