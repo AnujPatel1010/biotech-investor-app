@@ -89,7 +89,7 @@ export default function Home() {
       <section className="flex flex-col items-center justify-center text-center px-6 py-20">
         <div className="inline-flex items-center gap-2 bg-emerald-400/10 border border-emerald-400/20 rounded-full px-4 py-1.5 text-emerald-400 text-sm mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Simple BioTech Research
+          Simple Biotech Research
         </div>
 
         <h1 className="text-5xl sm:text-6xl font-bold tracking-tight max-w-3xl leading-tight mb-6">
