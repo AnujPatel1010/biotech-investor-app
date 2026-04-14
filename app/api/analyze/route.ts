@@ -52,46 +52,53 @@ Respond NO only if the input is clearly not a real biotech or pharma ticker — 
     }
 
     // Step 2: Full analysis
-    const prompt = `You are a biotech and pharma investment educator writing for retail investors who have no background in medicine, science, or finance. Your tone should be friendly, clear, and confident — like a knowledgeable friend explaining something important over coffee. Never write long dense paragraphs. Always use bullet points and short sentences. Be specific but concise.
+   const prompt = `You are a biotech and pharma investment educator writing for retail investors with no background in medicine, science, or finance. Your tone should be friendly, clear, and confident — like a knowledgeable friend explaining something important over coffee. Never write long dense paragraphs. Always use bullet points and short sentences. Be specific but concise. IMPORTANT: Do not repeat or restate the section title inside the text. Jump straight into the content.
 
 Analyze the biotech or pharma company with ticker: ${ticker}
 
-Format each section exactly like this — a 2-3 sentence intro followed by bullet points. Keep each bullet point to 1-2 sentences maximum. Make sure the user or reader doesn't feel overwhelmed with information, but at the same time, make it interesting and enjoyable to read. IMPORTANT: Do not repeat or restate the section title inside the text. Jump straight into the content.
+CRITICAL INSTRUCTION: Before writing anything, identify the single most important drug or therapy in this company's pipeline — the one with the most clinical data, the most advanced stage, or the most upcoming catalysts. Every single section below must be about THIS ONE DRUG ONLY. Do not switch drugs between sections. The entire breakdown must tell one coherent story about one specific drug from start to finish.
+
+At the very top of your response, before Section 1, write one line in this exact format:
+Focus Drug: [drug name] — [what it treats in plain English]
+
+Then write all 5 sections about that drug only.
+
+Format each section with a 2-3 sentence intro followed by bullet points. Keep each bullet to 1-2 sentences maximum.
 
 **1. What This Company Does**
-Brief 2-sentence intro explaining the company and what disease they target.
-- What the disease or condition is, and who it affects
-- How their drug or therapy works in plain English
-- What makes their approach different from existing treatments
-- Why this company exists and what problem they are solving
+Introduce the company and explain the specific disease or condition their focus drug targets.
+- What the disease or condition is, and who it affects in plain English
+- How this specific drug works inside the body — no jargon
+- What makes this drug different from existing treatments
+- Why this is a meaningful problem worth solving
 
 **2. Where They Are in the Pipeline**
-Brief 2-sentence intro explaining their current stage.
-- What stage they are in (Phase 1, 2, 3, or approved) and what that stage means in plain English
-- How far away they are from potentially reaching patients
-- What the next major milestone is
-- If they have multiple drugs, briefly name the others
+Focus only on the current development stage of the one focus drug identified above. Use the most recent information available.
+- What stage this specific drug is currently in and what that stage means in plain English
+- What the most recent clinical trial or regulatory action was for this drug
+- What the company's current plan is for this drug going forward
+- How far away this drug realistically is from reaching patients
 
 **3. What the Clinical Data Has Shown**
-Brief 2-sentence intro summarizing the overall picture.
-- The key result from their most important trial in plain English
-- Whether the drug appeared to work, and how well
-- Any safety concerns or notable side effects
-- How the results compare to existing treatments
+Report only the clinical trial results for the one focus drug. Be specific about trial names and numbers if known.
+- The name of the most important trial for this drug and what it was testing
+- The key result in plain English — did it work, and how well?
+- Any safety concerns or notable side effects from the trial data
+- How these results compare to the current standard of care or competing drugs
 
 **4. The Case for Approval**
-Brief 2-sentence intro on what success looks like.
-- What the FDA would need to see to approve this drug
-- Key upcoming trial readouts or regulatory dates to watch
-- Why regulators might look favorably on this drug
-- What a realistic best-case timeline looks like
+Build directly on the clinical data above for this one drug only.
+- What the FDA would specifically need to see to approve this drug
+- Whether there is a known PDUFA date or regulatory submission date for this drug, and what that means
+- Key upcoming milestones or trial readouts that could move this drug forward
+- Why regulators might look favorably on this specific drug based on the data
 
 **5. The Downside**
-Brief 2-sentence intro being honest about the risks.
-- What happens if a clinical trial fails
-- Financial risks such as needing to raise more money
-- Competitor threats in the same space
-- The realistic worst-case scenario for an investor today`;
+Now that the reader understands this specific drug fully, explain the real risks honestly.
+- What happens specifically if this drug's next trial or regulatory decision fails
+- Financial risks to the company if this drug does not succeed
+- Competitor drugs in the same space that could make this drug obsolete
+- The realistic worst-case scenario for an investor betting on this drug today`;
 
     const response = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
