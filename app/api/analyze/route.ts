@@ -52,53 +52,46 @@ Respond NO only if the input is clearly not a real biotech or pharma ticker — 
     }
 
     // Step 2: Full analysis
-   const prompt = `You are a biotech and pharma investment educator writing for retail investors with no background in medicine, science, or finance. Your tone should be friendly, clear, and confident — like a knowledgeable friend explaining something important over coffee. Never write long dense paragraphs. Always use bullet points and short sentences. Be specific but concise. IMPORTANT: Do not repeat or restate the section title inside the text. Jump straight into the content.
+   const prompt = `You are a biotech and pharma investment educator writing for long-term retail investors who have no background in medicine, science, or finance. Your tone should be friendly, clear, and confident — like a knowledgeable friend explaining something important over coffee. Never write long dense paragraphs. Always use bullet points and short sentences. Be specific but concise. IMPORTANT: Do not repeat or restate the section title inside the text. Jump straight into the content.
 
-Analyze the biotech or pharma company with ticker: ${ticker}
-
-CRITICAL INSTRUCTION: Before writing anything, identify the single most important drug or therapy in this company's pipeline — the one with the most clinical data, the most advanced stage, or the most upcoming catalysts. Every single section below must be about THIS ONE DRUG ONLY. Do not switch drugs between sections. The entire breakdown must tell one coherent story about one specific drug from start to finish.
-
-At the very top of your response, before Section 1, write one line in this exact format:
-Focus Drug: [drug name] — [what it treats in plain English]
-
-Then write all 5 sections about that drug only.
+Analyze the biotech or pharma company with ticker: ${ticker} from the perspective of a long-term investor with a 5-10 year horizon.
 
 Format each section with a 2-3 sentence intro followed by bullet points. Keep each bullet to 1-2 sentences maximum.
 
 **1. What This Company Does**
-Introduce the company and explain the specific disease or condition their focus drug targets.
-- What the disease or condition is, and who it affects in plain English
-- How this specific drug works inside the body — no jargon
-- What makes this drug different from existing treatments
-- Why this is a meaningful problem worth solving
+Introduce the company as a whole — their overall mission, what diseases or conditions they focus on, and how established they are.
+- What space they operate in and why it matters
+- How the company makes money — approved drugs, partnerships, royalties, etc.
+- How big or established they are — early stage startup vs. large established pharma
+- What makes this company's overall approach distinctive
 
-**2. Where They Are in the Pipeline**
-Focus only on the current development stage of the one focus drug identified above. Use the most recent information available.
-- What stage this specific drug is currently in and what that stage means in plain English
-- What the most recent clinical trial or regulatory action was for this drug
-- What the company's current plan is for this drug going forward
-- How far away this drug realistically is from reaching patients
+**2. Their Pipeline**
+Give a broad overview of the company's pipeline across all stages. Focus on the 2-3 most important drugs.
+- Their most advanced or most important drug and what it treats
+- One or two other notable drugs in development and what stage they are in
+- What the company's overall pipeline strength looks like for the next 5 years
+- Whether they have a history of successfully developing and commercializing drugs
 
-**3. What the Clinical Data Has Shown**
-Report only the clinical trial results for the one focus drug. Be specific about trial names and numbers if known.
-- The name of the most important trial for this drug and what it was testing
-- The key result in plain English — did it work, and how well?
-- Any safety concerns or notable side effects from the trial data
-- How these results compare to the current standard of care or competing drugs
+**3. What the Data Has Shown**
+Summarize the clinical results for their 2-3 most important drugs. Focus on what the data means for the company's long-term future.
+- The most important trial result for their lead drug in plain English
+- What the data says about whether this company knows how to develop effective drugs
+- Any safety concerns across their portfolio that investors should know about
+- How their data compares to competitors in the same space
 
-**4. The Case for Approval**
-Build directly on the clinical data above for this one drug only.
-- What the FDA would specifically need to see to approve this drug
-- Whether there is a known PDUFA date or regulatory submission date for this drug, and what that means
-- Key upcoming milestones or trial readouts that could move this drug forward
-- Why regulators might look favorably on this specific drug based on the data
+**4. The Long-Term Bull Case**
+Explain why this company could be worth significantly more in 5-10 years. Be specific and realistic.
+- The single most compelling reason to hold this stock long term
+- What market opportunity exists if their key drugs succeed
+- Any competitive advantages that could protect their position long term — patents, technology, partnerships
+- What would have to go right over the next 5 years for this to be a strong investment
 
 **5. The Downside**
-Now that the reader understands this specific drug fully, explain the real risks honestly.
-- What happens specifically if this drug's next trial or regulatory decision fails
-- Financial risks to the company if this drug does not succeed
-- Competitor drugs in the same space that could make this drug obsolete
-- The realistic worst-case scenario for an investor betting on this drug today`;
+Be honest and specific about the long-term risks. Do not soften this section.
+- The biggest threat to the long-term thesis — clinical, competitive, or financial
+- Financial health risks — do they have enough cash, do they need to raise money
+- Competition that could make their drugs obsolete or less valuable
+- The realistic worst-case scenario for someone holding this stock for 5 years`;
 
     const response = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
