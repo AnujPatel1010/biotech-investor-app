@@ -44,15 +44,32 @@ export default function Home() {
   };
 
   const formatResult = (text: string) => {
-    const sections = text.split(/\*\*\d+\./).filter(Boolean);
-    const titles = [...text.matchAll(/\*\*(\d+\..+?)\*\*/g)].map(m => m[1]);
+    const sectionRegex = /\*\*(\d+\..+?)\*\*/g;
+    const titles: string[] = [];
+    let match;
+    while ((match = sectionRegex.exec(text)) !== null) {
+      titles.push(match[1]);
+    }
+
+    const sections = text.split(/\*\*\d+\..+?\*\*/).filter(Boolean);
 
     return sections.map((section, i) => (
       <div key={i} className="bg-white/4 border border-white/8 rounded-2xl p-7 mb-4">
-        <h3 className="text-emerald-400 font-semibold text-lg mb-3">{titles[i]}</h3>
-        <p className="text-white/70 leading-relaxed text-sm whitespace-pre-wrap">
-          {section.replace(/\*\*/g, '').trim()}
-        </p>
+        <h3 className="text-emerald-400 font-semibold text-lg mb-4">{titles[i]}</h3>
+        <div className="text-white/70 text-sm leading-relaxed space-y-2">
+          {section.trim().split('\n').filter(line => line.trim()).map((line, j) => {
+            const isBullet = line.trim().startsWith('*') || line.trim().startsWith('-');
+            if (isBullet) {
+              return (
+                <div key={j} className="flex gap-2">
+                  <span className="text-emerald-400 mt-0.5 shrink-0">•</span>
+                  <span>{line.replace(/^[\*\-]\s*/, '').trim()}</span>
+                </div>
+              );
+            }
+            return <p key={j}>{line.trim()}</p>;
+          })}
+        </div>
       </div>
     ));
   };

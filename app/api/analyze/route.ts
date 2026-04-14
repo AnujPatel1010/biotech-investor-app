@@ -56,7 +56,7 @@ Respond NO only if the input is clearly not a real biotech or pharma ticker — 
 
 Analyze the biotech or pharma company with ticker: ${ticker}
 
-Format each section exactly like this — a 2-3 sentence intro followed by bullet points. Keep each bullet point to 1-2 sentences maximum. Make sure the user or reader doesn't feel overwhelmed with information, but at the same time, make it interesting and enjoyable to read.
+Format each section exactly like this — a 2-3 sentence intro followed by bullet points. Keep each bullet point to 1-2 sentences maximum. Make sure the user or reader doesn't feel overwhelmed with information, but at the same time, make it interesting and enjoyable to read. IMPORTANT: Do not repeat or restate the section title inside the text. Jump straight into the content.
 
 **1. What This Company Does**
 Brief 2-sentence intro explaining the company and what disease they target.
