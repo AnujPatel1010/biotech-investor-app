@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { TavilyClient } from '@tavily/core';
 
 export async function POST(req: NextRequest) {
   try {
     const { ticker } = await req.json();
 
     const apiKey = process.env.GROQ_API_KEY;
+    const tavilyKey = process.env.TAVILY_API_KEY;
 
-    if (!apiKey) {
+    if (!apiKey || !tavilyKey) {
       return NextResponse.json({ error: 'Missing API key' }, { status: 500 });
     }
 
@@ -14,6 +16,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'FULL_NAME' });
     }
 
+    // ✅ KEEP YOUR VALIDATION EXACTLY THE SAME
     const validationResponse = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
       {
@@ -49,7 +52,27 @@ Respond NO only if the input is clearly not a real biotech or pharma ticker.`,
       return NextResponse.json({ error: 'NOT_FOUND' });
     }
 
+    // ✅ NEW: Tavily real-time search
+    const tavily = new TavilyClient({ apiKey: tavilyKey });
+
+    const searchQuery = `${ticker} biotech pharma company pipeline FDA approvals earnings drugs 2026`;
+
+    const tavilyResponse = await tavily.search({
+      query: searchQuery,
+      search_depth: 'advanced',
+      max_results: 5,
+    });
+
+    const context = tavilyResponse.results
+      .map((r: any) => r.content)
+      .join('\n\n');
+
+    // ✅ SAME PROMPT — only added context at top
     const prompt = `You are a biotech and pharma investment educator writing for long-term retail investors with no background in medicine, science, or finance. Your tone is friendly, clear, and confident — like a knowledgeable friend explaining something important over coffee. Never write long dense paragraphs. Always use bullet points and short sentences.
+
+Use the REAL-TIME INFORMATION below. Do not rely on outdated knowledge.
+
+${context}
 
 CRITICAL RULES — FOLLOW THESE OR THE RESPONSE IS USELESS:
 - Never use vague phrases like "diverse pipeline," "promising data," "may need to raise money," or "strong competitive position." These mean nothing to an investor.
