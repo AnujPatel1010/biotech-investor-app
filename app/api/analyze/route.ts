@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TavilyClient } from '@tavily/core';
+import { tavily } from '@tavily/core';
 
 export async function POST(req: NextRequest) {
   try {
@@ -53,11 +53,11 @@ Respond NO only if the input is clearly not a real biotech or pharma ticker.`,
     }
 
     // ✅ NEW: Tavily real-time search
-    const tavily = new TavilyClient({ apiKey: tavilyKey });
+    const tvly = tavily({ apiKey: tavilyKey });
 
     const searchQuery = `${ticker} biotech pharma company pipeline FDA approvals earnings drugs 2026`;
 
-    const tavilyResponse = await tavily.search({
+    const tavilyResponse = await tvly.search({
       query: searchQuery,
       search_depth: 'advanced',
       max_results: 5,
