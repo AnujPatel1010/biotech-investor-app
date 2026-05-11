@@ -3,32 +3,46 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-export default function ComparisonPage() {
-  const [tickerA, setTickerA] = useState('');
-  const [tickerB, setTickerB] = useState('');
-  const [result, setResult] = useState<any>(null);
+const COMMON_TERMS = [
+  'Phase 3 Trial', 'FDA Approval', 'PDUFA Date', 'Clinical Trial',
+  'Pipeline', 'Biomarker', 'Orphan Drug', 'Accelerated Approval',
+  'Patent Cliff', 'IND Application', 'NDA', 'BLA',
+  'Placebo', 'Double Blind Study', 'Primary Endpoint', 'Market Cap',
+  'Dilution', 'Cash Runway', 'Blockbuster Drug', 'Generic Drug',
+];
+
+export default function GlossaryPage() {
+  const [term, setTerm] = useState('');
+  const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [searchedTerm, setSearchedTerm] = useState('');
 
-  const compare = async () => {
-    if (!tickerA.trim() || !tickerB.trim()) return;
+  const lookup = async (searchTerm?: string) => {
+    const termToSearch = searchTerm || term;
+    if (!termToSearch.trim()) return;
     setLoading(true);
-    setResult(null);
+    setResult('');
     setError('');
+    setSearchedTerm(termToSearch);
 
     try {
-      const res = await fetch('/api/compare', {
+      const res = await fetch('/api/glossary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tickerA, tickerB }),
+        body: JSON.stringify({ term: termToSearch }),
       });
 
       const data = await res.json();
 
-      if (data.error === 'NOT_FOUND_A') { setError(`"${tickerA}" doesn't appear to be a valid biotech or pharma ticker.`); return; }
-      if (data.error === 'NOT_FOUND_B') { setError(`"${tickerB}" doesn't appear to be a valid biotech or pharma ticker.`); return; }
-      if (data.error === 'FULL_NAME') { setError('Please enter ticker symbols only (e.g. MRNA, PFE) — not full company names.'); return; }
-      if (data.error) { setError(data.error); return; }
+      if (data.error === 'NOT_BIOTECH') {
+        setError(`"${termToSearch}" doesn't appear to be a biotech or investing term. Try something like "Phase 3 Trial" or "PDUFA Date".`);
+        return;
+      }
+      if (data.error) {
+        setError('Something went wrong. Please try again.');
+        return;
+      }
 
       setResult(data.result);
     } catch (err: any) {
@@ -38,18 +52,22 @@ export default function ComparisonPage() {
     }
   };
 
-  const formatBullets = (text: string) => {
-    return text.split('•').filter(s => s.trim()).map((line, i) => (
-      <div key={i} className="flex gap-2 mb-2">
-        <span className="text-emerald-400 shrink-0">•</span>
-        <span>{line.trim()}</span>
-      </div>
-    ));
+  const formatResult = (text: string) => {
+    const lines = text.split('\n').filter(l => l.trim());
+    return lines.map((line, i) => {
+      if (line.startsWith('**') && line.includes(':**')) {
+        const label = line.match(/\*\*(.+?):\*\*/)?.[1];
+        const content = line.replace(/\*\*.+?:\*\*\s*/, '');
+        return (
+          <div key={i} className="mb-4">
+            <span className="text-emerald-400 font-semibold">{label}: </span>
+            <span className="text-white/70">{content}</span>
+          </div>
+        );
+      }
+      return <p key={i} className="text-white/70 mb-2">{line}</p>;
+    });
   };
-
-  const winner = result ? (result.scores.companyA.total >= result.scores.companyB.total ? tickerA : tickerB) : null;
-  const loser = result ? (winner === tickerA ? tickerB : tickerA) : null;
-  const pointDiff = result ? Math.abs(result.scores.companyA.total - result.scores.companyB.total) : 0;
 
   return (
     <main className="min-h-screen bg-[#0a0e1a] text-white font-sans">
@@ -61,8 +79,8 @@ export default function ComparisonPage() {
         </div>
         <div className="flex items-center gap-6">
           <Link href="/" className="text-sm text-white/50 hover:text-white transition-colors">Company Breakdown</Link>
-          <Link href="/comparison" className="text-sm text-emerald-400 font-medium">Comparison Mode</Link>
-          <Link href="/glossary" className="text-sm text-white/50 hover:text-white transition-colors">Glossary</Link>
+          <Link href="/comparison" className="text-sm text-white/50 hover:text-white transition-colors">Comparison Mode</Link>
+          <Link href="/glossary" className="text-sm text-emerald-400 font-medium">Glossary</Link>
         </div>
       </nav>
 
@@ -70,111 +88,64 @@ export default function ComparisonPage() {
       <section className="flex flex-col items-center text-center px-6 py-16">
         <div className="inline-flex items-center gap-2 bg-emerald-400/10 border border-emerald-400/20 rounded-full px-4 py-1.5 text-emerald-400 text-sm mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Head-to-Head Analysis
+          Plain-English Definitions
         </div>
 
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight max-w-3xl leading-tight mb-4">
-          Compare two companies,{' '}
-          <span className="text-emerald-400">side by side.</span>
+          Biotech terms,{' '}
+          <span className="text-emerald-400">actually explained.</span>
         </h1>
         <p className="text-white/50 max-w-lg mb-10 leading-relaxed">
-          Enter two biotech or pharma tickers to get a plain-English comparison of their pipeline, data, and long-term investment case.
+          Type any biotech or pharma term and get a plain-English explanation — no medical degree required.
         </p>
 
-        {/* Inputs */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-lg">
+        {/* Search Input */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
           <input
             type="text"
-            value={tickerA}
-            onChange={(e) => setTickerA(e.target.value.toUpperCase())}
-            onKeyDown={(e) => e.key === 'Enter' && compare()}
-            placeholder="First ticker (e.g. MRNA)"
-            maxLength={6}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-all"
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && lookup()}
+            placeholder="e.g. PDUFA Date, Phase 3 Trial..."
+            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-all"
           />
-          <span className="text-white/30 font-bold text-xl">VS</span>
-          <input
-            type="text"
-            value={tickerB}
-            onChange={(e) => setTickerB(e.target.value.toUpperCase())}
-            onKeyDown={(e) => e.key === 'Enter' && compare()}
-            placeholder="Second ticker (e.g. PFE)"
-            maxLength={6}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-all"
-          />
+          <button
+            onClick={() => lookup()}
+            disabled={loading}
+            className="bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl px-7 py-4 transition-colors whitespace-nowrap"
+          >
+            {loading ? 'Looking up...' : 'Look Up →'}
+          </button>
         </div>
-
-        <button
-          onClick={compare}
-          disabled={loading}
-          className="mt-5 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold rounded-xl px-10 py-4 transition-colors"
-        >
-          {loading ? 'Comparing...' : 'Compare →'}
-        </button>
 
         {error && <p className="text-red-400 text-sm mt-4">{error}</p>}
       </section>
 
-      {/* Results */}
+      {/* Result */}
       {result && (
-        <section className="px-6 pb-24 max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 gap-4 mb-4 px-1">
-            <div className="text-center text-emerald-400 font-bold text-3xl">{tickerA}</div>
-            <div className="text-center text-emerald-400 font-bold text-3xl">{tickerB}</div>
-          </div>
-
-          {result.sections.map((section: any, i: number) => (
-            <div key={i} className="mb-4">
-              <h3 className="text-emerald-400 font-semibold text-lg mb-3 text-center">{section.title}</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/4 border border-white/8 rounded-2xl p-6 text-sm text-white/70 leading-relaxed">
-                  {formatBullets(section.companyA)}
-                </div>
-                <div className="bg-white/4 border border-white/8 rounded-2xl p-6 text-sm text-white/70 leading-relaxed">
-                  {formatBullets(section.companyB)}
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {/* Score Card */}
-          <div className="mt-8 bg-white/4 border border-white/8 rounded-2xl p-8">
-            <h3 className="text-center font-bold text-lg mb-6">Score Breakdown</h3>
-            <div className="grid grid-cols-3 gap-4 text-sm text-center mb-6">
-              <div className="text-white/40 font-medium uppercase tracking-widest text-xs">Category</div>
-              <div className="text-emerald-400 font-bold">{tickerA}</div>
-              <div className="text-emerald-400 font-bold">{tickerB}</div>
-              {['pipeline', 'data', 'competitive', 'financial'].map((key) => (
-                <>
-                  <div key={key + 'label'} className="text-white/50 capitalize py-2 border-t border-white/5">{key}</div>
-                  <div key={key + 'a'} className="text-white py-2 border-t border-white/5">{result.scores.companyA[key]}<span className="text-white/30">/25</span></div>
-                  <div key={key + 'b'} className="text-white py-2 border-t border-white/5">{result.scores.companyB[key]}<span className="text-white/30">/25</span></div>
-                </>
-              ))}
-              <div className="text-white font-bold py-2 border-t border-emerald-400/30">Total</div>
-              <div className="text-emerald-400 font-bold py-2 border-t border-emerald-400/30">{result.scores.companyA.total}<span className="text-white/30">/100</span></div>
-              <div className="text-emerald-400 font-bold py-2 border-t border-emerald-400/30">{result.scores.companyB.total}<span className="text-white/30">/100</span></div>
-            </div>
-          </div>
-
-          {/* Verdict Box */}
-          <div className="mt-4 bg-emerald-400/10 border border-emerald-400/30 rounded-2xl p-8">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="w-2 h-2 rounded-full bg-emerald-400" />
-              <h3 className="text-emerald-400 font-bold text-lg">The Verdict</h3>
-            </div>
-            <p className="text-white text-center text-base leading-relaxed mb-3">
-              <span className="text-emerald-400 font-bold">{winner}</span> looks stronger by{' '}
-              <span className="text-emerald-400 font-bold">{pointDiff} points</span> over{' '}
-              <span className="text-white/60">{loser}</span>.
-            </p>
-            <p className="text-white/70 text-center text-sm leading-relaxed mb-4">{result.verdict}</p>
-            <p className="text-white/30 text-center text-xs">
-              This analysis is AI-generated and for educational purposes only. It is not financial advice. Always do your own research before investing.
-            </p>
+        <section className="px-6 pb-12 max-w-2xl mx-auto">
+          <div className="bg-white/4 border border-white/8 rounded-2xl p-8">
+            <h3 className="text-emerald-400 font-bold text-xl mb-6">{searchedTerm}</h3>
+            {formatResult(result)}
           </div>
         </section>
       )}
+
+      {/* Common Terms */}
+      <section className="px-6 pb-24 max-w-4xl mx-auto">
+        <h2 className="text-white/40 text-sm font-semibold uppercase tracking-widest mb-6 text-center">Common Terms</h2>
+        <div className="flex flex-wrap gap-3 justify-center">
+          {COMMON_TERMS.map((t) => (
+            <button
+              key={t}
+              onClick={() => { setTerm(t); lookup(t); }}
+              className="bg-white/4 border border-white/8 rounded-full px-4 py-2 text-sm text-white/60 hover:text-white hover:border-emerald-400/40 transition-colors"
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </section>
 
       {/* Feature Cards */}
       <section className="px-6 pb-24 max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -200,11 +171,12 @@ export default function ComparisonPage() {
           </p>
         </Link>
       </section>
-
-      {/* Footer */}
+    {/* Footer */}
       <footer className="border-t border-white/10 text-center py-8 text-white/25 text-sm">
         BioClarity is an educational tool only. Nothing here constitutes financial or investment advice.
       </footer>
     </main>
+  );
+}
   );
 }

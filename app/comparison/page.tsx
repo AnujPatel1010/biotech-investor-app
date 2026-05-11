@@ -40,12 +40,12 @@ export default function ComparisonPage() {
 
   const formatBullets = (text: string) => {
     return text.split('•').filter(s => s.trim()).map((line, i) => (
-        <div key={i} className="flex gap-2 mb-2">
-            <span className="text-emerald-400 shrink-0">•</span>
-            <span>{line.trim()}</span>
-        </div>
+      <div key={i} className="flex gap-2 mb-2">
+        <span className="text-emerald-400 shrink-0">•</span>
+        <span>{line.trim()}</span>
+      </div>
     ));
-   };
+  };
 
   const winner = result ? (result.scores.companyA.total >= result.scores.companyB.total ? tickerA : tickerB) : null;
   const loser = result ? (winner === tickerA ? tickerB : tickerA) : null;
@@ -60,10 +60,10 @@ export default function ComparisonPage() {
           <span className="text-lg font-semibold tracking-tight">BioClarity</span>
         </div>
         <div className="flex items-center gap-6">
-  <Link href="/" className="text-sm text-white/50 hover:text-white transition-colors">Company Breakdown</Link>
-  <Link href="/comparison" className="text-sm text-emerald-400 font-medium">Comparison Mode</Link>
-  <Link href="/glossary" className="text-sm text-white/50 hover:text-white transition-colors">Glossary</Link>
-</div>
+          <Link href="/" className="text-sm text-white/50 hover:text-white transition-colors">Company Breakdown</Link>
+          <Link href="/comparison" className="text-sm text-emerald-400 font-medium">Comparison Mode</Link>
+          <Link href="/glossary" className="text-sm text-white/50 hover:text-white transition-colors">Glossary</Link>
+        </div>
       </nav>
 
       {/* Hero */}
@@ -91,7 +91,7 @@ export default function ComparisonPage() {
             placeholder="First ticker (e.g. MRNA)"
             maxLength={6}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-all"
-        />
+          />
           <span className="text-white/30 font-bold text-xl">VS</span>
           <input
             type="text"
@@ -101,7 +101,7 @@ export default function ComparisonPage() {
             placeholder="Second ticker (e.g. PFE)"
             maxLength={6}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-all"
-        />
+          />
         </div>
 
         <button
@@ -118,14 +118,11 @@ export default function ComparisonPage() {
       {/* Results */}
       {result && (
         <section className="px-6 pb-24 max-w-6xl mx-auto">
-
-         {/* Section headers */}
-        <div className="grid grid-cols-2 gap-4 mb-4 px-1">
+          <div className="grid grid-cols-2 gap-4 mb-4 px-1">
             <div className="text-center text-emerald-400 font-bold text-3xl">{tickerA}</div>
             <div className="text-center text-emerald-400 font-bold text-3xl">{tickerB}</div>
-        </div>
+          </div>
 
-          {/* Comparison sections */}
           {result.sections.map((section: any, i: number) => (
             <div key={i} className="mb-4">
               <h3 className="text-emerald-400 font-semibold text-lg mb-3 text-center">{section.title}</h3>
@@ -147,7 +144,6 @@ export default function ComparisonPage() {
               <div className="text-white/40 font-medium uppercase tracking-widest text-xs">Category</div>
               <div className="text-emerald-400 font-bold">{tickerA}</div>
               <div className="text-emerald-400 font-bold">{tickerB}</div>
-
               {['pipeline', 'data', 'competitive', 'financial'].map((key) => (
                 <>
                   <div key={key + 'label'} className="text-white/50 capitalize py-2 border-t border-white/5">{key}</div>
@@ -155,7 +151,6 @@ export default function ComparisonPage() {
                   <div key={key + 'b'} className="text-white py-2 border-t border-white/5">{result.scores.companyB[key]}<span className="text-white/30">/25</span></div>
                 </>
               ))}
-
               <div className="text-white font-bold py-2 border-t border-emerald-400/30">Total</div>
               <div className="text-emerald-400 font-bold py-2 border-t border-emerald-400/30">{result.scores.companyA.total}<span className="text-white/30">/100</span></div>
               <div className="text-emerald-400 font-bold py-2 border-t border-emerald-400/30">{result.scores.companyB.total}<span className="text-white/30">/100</span></div>
@@ -178,9 +173,38 @@ export default function ComparisonPage() {
               This analysis is AI-generated and for educational purposes only. It is not financial advice. Always do your own research before investing.
             </p>
           </div>
-
         </section>
       )}
+
+      {/* Feature Cards */}
+      <section className="px-6 pb-24 max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <Link href="/" className="bg-white/4 border border-white/8 rounded-2xl p-7 hover:border-emerald-400/30 transition-colors block">
+          <div className="text-2xl mb-4">🔬</div>
+          <h3 className="font-semibold text-lg mb-2">Company Breakdown</h3>
+          <p className="text-white/45 text-sm leading-relaxed">
+            Pipeline stage, clinical data, approval odds, and honest downside risk — in simple English.
+          </p>
+        </Link>
+        <Link href="/comparison" className="bg-white/4 border border-white/8 rounded-2xl p-7 hover:border-emerald-400/30 transition-colors block">
+          <div className="text-2xl mb-4">⚖️</div>
+          <h3 className="font-semibold text-lg mb-2">Comparison Mode</h3>
+          <p className="text-white/45 text-sm leading-relaxed">
+            Two companies, same therapeutic area. See who has stronger data and better positioning.
+          </p>
+        </Link>
+        <Link href="/glossary" className="bg-white/4 border border-white/8 rounded-2xl p-7 hover:border-emerald-400/30 transition-colors block">
+          <div className="text-2xl mb-4">📖</div>
+          <h3 className="font-semibold text-lg mb-2">Integrated Glossary</h3>
+          <p className="text-white/45 text-sm leading-relaxed">
+            Every technical term explained instantly. Build real biotech literacy as you research.
+          </p>
+        </Link>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10 text-center py-8 text-white/25 text-sm">
+        BioClarity is an educational tool only. Nothing here constitutes financial or investment advice.
+      </footer>
     </main>
   );
 }
