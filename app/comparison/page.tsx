@@ -116,16 +116,16 @@ export default function ComparisonPage() {
       {result && (
         <section className="px-6 pb-24 max-w-6xl mx-auto">
 
-          {/* Section headers */}
-          <div className="grid grid-cols-2 gap-4 mb-4 px-1">
-            <div className="text-center text-emerald-400 font-bold text-xl">{tickerA}</div>
-            <div className="text-center text-emerald-400 font-bold text-xl">{tickerB}</div>
-          </div>
+         {/* Section headers */}
+        <div className="grid grid-cols-2 gap-4 mb-4 px-1">
+            <div className="text-center text-emerald-400 font-bold text-3xl">{tickerA}</div>
+            <div className="text-center text-emerald-400 font-bold text-3xl">{tickerB}</div>
+        </div>
 
           {/* Comparison sections */}
           {result.sections.map((section: any, i: number) => (
             <div key={i} className="mb-4">
-              <h3 className="text-white/60 text-sm font-semibold uppercase tracking-widest mb-3 text-center">{section.title}</h3>
+              <h3 className="text-emerald-400 font-semibold text-lg mb-3 text-center">{section.title}</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/4 border border-white/8 rounded-2xl p-6 text-sm text-white/70 leading-relaxed">
                   {formatBullets(section.companyA)}
