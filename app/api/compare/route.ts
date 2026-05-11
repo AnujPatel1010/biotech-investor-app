@@ -133,7 +133,13 @@ Return ONLY a valid JSON object with this exact structure. No markdown, no backt
       return NextResponse.json({ error: 'No response from AI' }, { status: 500 });
     }
 
-    const clean = text.replace(/```json|```/g, '').trim();
+    const clean = text
+        .replace(/```json|```/g, '')
+        .replace(/[\u0000-\u001F\u007F]/g, (char) => {
+            if (char === '\n' || char === '\r' || char === '\t') return ' ';
+            return '';
+        })
+        .trim();
     const parsed = JSON.parse(clean);
 
     return NextResponse.json({ result: parsed });
