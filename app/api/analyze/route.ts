@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'FULL_NAME' });
     }
 
-    // ✅ KEEP YOUR VALIDATION EXACTLY THE SAME
+    // ✅ VALIDATION (unchanged)
     const validationResponse = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
       {
@@ -52,25 +52,24 @@ Respond NO only if the input is clearly not a real biotech or pharma ticker.`,
       return NextResponse.json({ error: 'NOT_FOUND' });
     }
 
-    // ✅ NEW: Tavily real-time search
+    // ✅ Tavily search
     const tvly = tavily({ apiKey: tavilyKey });
 
     const searchQuery = `${ticker} biotech pharma company pipeline FDA approvals earnings drugs 2026`;
 
-    const tavilyResponse = await tvly.search({
-      query: searchQuery,
+    const tavilyResponse = await tvly.search(searchQuery, {
       search_depth: 'advanced',
       max_results: 5,
     });
 
-    const context = tavilyResponse.results
-      .map((r: any) => r.content)
-      .join('\n\n');
+    const context = tavilyResponse?.results
+      ?.map((r: any) => r.content)
+      .join('\n\n') || 'No real-time data found.';
 
-    // ✅ SAME PROMPT — only added context at top
+    // ✅ SAME PROMPT (only small wording tweak)
     const prompt = `You are a biotech and pharma investment educator writing for long-term retail investors with no background in medicine, science, or finance. Your tone is friendly, clear, and confident — like a knowledgeable friend explaining something important over coffee. Never write long dense paragraphs. Always use bullet points and short sentences.
 
-Use the REAL-TIME INFORMATION below. Do not rely on outdated knowledge.
+Use ONLY the REAL-TIME INFORMATION below. Do not rely on prior knowledge.
 
 ${context}
 
