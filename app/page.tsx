@@ -151,13 +151,13 @@ export default function Home() {
               Pipeline stage, clinical data, approval odds, and honest downside risk — in simple English.
             </p>
           </div>
-          <div className="bg-white/4 border border-white/8 rounded-2xl p-7 hover:border-emerald-400/30 transition-colors">
+          <Link href="/comparison" className="bg-white/4 border border-white/8 rounded-2xl p-7 hover:border-emerald-400/30 transition-colors block">
             <div className="text-2xl mb-4">⚖️</div>
             <h3 className="font-semibold text-lg mb-2">Comparison Mode</h3>
             <p className="text-white/45 text-sm leading-relaxed">
               Two companies, same therapeutic area. See who has stronger data and better positioning.
             </p>
-          </div>
+          </Link>
           <div className="bg-white/4 border border-white/8 rounded-2xl p-7 hover:border-emerald-400/30 transition-colors">
             <div className="text-2xl mb-4">📖</div>
             <h3 className="font-semibold text-lg mb-2">Integrated Glossary</h3>
@@ -174,4 +174,4 @@ export default function Home() {
       </footer>
     </main>
   );
-}
+}  
