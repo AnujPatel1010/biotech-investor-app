@@ -86,6 +86,7 @@ export default function Home() {
         <div className="flex items-center gap-6">
           <Link href="/" className="text-sm text-emerald-400 font-medium">Company Breakdown</Link>
           <Link href="/comparison" className="text-sm text-white/50 hover:text-white transition-colors">Comparison Mode</Link>
+          <Link href="/glossary" className="text-sm text-white/50 hover:text-white transition-colors">Glossary</Link>
         </div>
       </nav>
 
