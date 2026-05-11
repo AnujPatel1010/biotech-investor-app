@@ -86,19 +86,21 @@ export default function ComparisonPage() {
             type="text"
             value={tickerA}
             onChange={(e) => setTickerA(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === 'Enter' && compare()}
             placeholder="First ticker (e.g. MRNA)"
             maxLength={6}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-all"
-          />
+        />
           <span className="text-white/30 font-bold text-xl">VS</span>
           <input
             type="text"
             value={tickerB}
             onChange={(e) => setTickerB(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === 'Enter' && compare()}
             placeholder="Second ticker (e.g. PFE)"
             maxLength={6}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-400/50 transition-all"
-          />
+        />
         </div>
 
         <button
