@@ -60,9 +60,10 @@ export default function ComparisonPage() {
           <span className="text-lg font-semibold tracking-tight">BioClarity</span>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-sm text-white/50 hover:text-white transition-colors">Company Breakdown</Link>
-          <Link href="/comparison" className="text-sm text-emerald-400 font-medium">Comparison Mode</Link>
-        </div>
+  <Link href="/" className="text-sm text-white/50 hover:text-white transition-colors">Company Breakdown</Link>
+  <Link href="/comparison" className="text-sm text-emerald-400 font-medium">Comparison Mode</Link>
+  <Link href="/glossary" className="text-sm text-white/50 hover:text-white transition-colors">Glossary</Link>
+</div>
       </nav>
 
       {/* Hero */}
