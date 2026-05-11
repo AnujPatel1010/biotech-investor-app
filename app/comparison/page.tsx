@@ -39,13 +39,13 @@ export default function ComparisonPage() {
   };
 
   const formatBullets = (text: string) => {
-    return text.split('\n').filter(line => line.trim()).map((line, i) => (
-      <div key={i} className="flex gap-2 mb-2">
-        <span className="text-emerald-400 shrink-0">•</span>
-        <span>{line.replace(/^•\s*/, '').trim()}</span>
-      </div>
+    return text.split('•').filter(s => s.trim()).map((line, i) => (
+        <div key={i} className="flex gap-2 mb-2">
+            <span className="text-emerald-400 shrink-0">•</span>
+            <span>{line.trim()}</span>
+        </div>
     ));
-  };
+   };
 
   const winner = result ? (result.scores.companyA.total >= result.scores.companyB.total ? tickerA : tickerB) : null;
   const loser = result ? (winner === tickerA ? tickerB : tickerA) : null;

@@ -135,10 +135,8 @@ Return ONLY a valid JSON object with this exact structure. No markdown, no backt
 
     const clean = text
         .replace(/```json|```/g, '')
-        .replace(/[\u0000-\u001F\u007F]/g, (char) => {
-            if (char === '\n' || char === '\r' || char === '\t') return ' ';
-            return '';
-        })
+        .replace(/\r?\n/g, ' ')
+        .replace(/\r/g, '')
         .trim();
     const parsed = JSON.parse(clean);
 
